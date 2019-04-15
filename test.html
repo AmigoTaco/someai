@@ -1,0 +1,90 @@
+<head>
+	<title>Test</title>
+	<meta charset="UTF-8">
+	<style>body{background:#000;margin:0;padding:0;}}</style>
+</head>
+<body allowfullscreen>
+	<div id="d">
+		<canvas height="602" width="800" id="c" style="margin:auto;display:block;cursor:none;background:#a9c27a;"></canvas>
+	</div>
+</body>
+
+<script>
+	let CreatureClass = {
+		energy:100,
+		health: 100,
+		hunger: 0,
+		thirst: 0,
+		atack: 5,
+		defense: 5,
+		memory: {},
+		x:100,
+		y:60,
+		size: 10,
+		tick : function () {
+			console.log(this);
+			this.hunger++;
+			this.thirst++;
+			if (this.hunger>80) {
+				this.health--;
+			}
+		},
+		eat : function (food) {
+			this.hunger-=food.value;
+		},
+		drink : function (food) {
+			this.hunger-=food.value;
+		},
+		draw : function (ctx) {
+			ctx.beginPath();
+			ctx.lineWidth=1;
+			ctx.strokeStyle= "#AFAFAF";
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(this.x,this.y,this.size,this.size);
+		}
+	}
+	
+	let creature = CreatureClass;
+	let canvas = document.querySelector("#c");
+	let ctx = canvas.getContext('2d');
+	let global = {
+		timer : 0,
+		game : "",
+		lastDraw : new Date(),
+		lastLogic : new Date(),
+		lastSecond : new Date(),
+		context: ctx
+	}
+
+	window.addEventListener("load", function () {
+
+
+		global.game = setInterval(function(){
+			//Execute the draw function 60 times per second
+			if ((new Date()).getTime() >= global.lastDraw.getTime() + (1000/60))
+			{
+				draw();
+				global.lastDraw = new Date();
+			} 
+			if ((new Date()).getTime() >= global.lastSecond.getTime() + 1000)
+			{
+				global.timer++;
+				global.lastSecond = new Date();
+				logic();
+			} 
+		}, 10);
+	});
+	
+	function draw () {
+		creature.draw(global.context);
+	}
+	
+	function logic () {
+		creature.tick();
+		//if ( global.timer == 10 ) stop();
+	}
+	
+	function stop () {
+		clearInterval(global.game)
+	}
+</script>
